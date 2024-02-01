@@ -1,0 +1,40 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: DiaMetrics (lite)
+message: >-
+  If you mention, use, adapt or publish this project
+  elsewhere, please cite it using the metadata from this
+  file.
+type: software
+authors:
+  - given-names: Leon
+    family-names: Rosenplänter
+    orcid: 'https://orcid.org/0009-0001-4961-2281'
+repository-code: 'https://github.com/lrosenplaenter/DiaMetrics_lite'
+url: 'https://lrosenplaenter.github.io/DiaMetrics_lite'
+abstract: >-
+  DiaMetrics (lite) is a web-based educational resource for exploring 
+  important concepts regarding binary classification (and its 
+  evaluation), which is important in many different fields such as 
+  psychodiagnostics (e.g. in determining cut-off values for tests), 
+  machine learning or medical testing. The lite version is primarily 
+  intended for use with direct instruction (e.g. in the context of 
+  lectures or talks).
+keywords:
+  - specificity
+  - sensitivity
+  - learning-by-doing
+  - binary-classification
+  - binary-classification-evaluation
+  - teaching-materials
+  - teaching-resources
+  - teaching-tool
+  - learning-materials
+  - learning-resources
+  - learning-tool
+license: MIT
+commit: initial commit
+version: 1.0.0
+date-released: '2024-02-01'

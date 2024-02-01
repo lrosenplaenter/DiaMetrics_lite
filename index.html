@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<!--
+    DiaMetrics (lite) v1.0.0
+    https://github.com/lrosenplaenter/DiaMetrics_lite
+    Copyright (c) 2024 Leon Rosenplänter. 
+    DiaMetrics is available under the MIT license.
+-->
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiaMetrics (lite) 1.0</title>
+    <!-- Bootstrap CSS https://getbootstrap.com/docs/5.3/about/license/ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="index.css">
+    <!-- Chart.js https://www.chartjs.org/docs/latest/ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <!-- chartjs-plugin-dragdata https://github.com/chrispahm/chartjs-plugin-dragdata -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@2.2.3/dist/chartjs-plugin-dragdata.min.js"></script>
+</head>
+
+<body id ="body">
+    <div class="container pt-5">
+        <div class="card" style="width: 100%">    
+            <div id="chart_container" class="card-body">
+                <div class="row" id="chart_row">
+                    <div class="col-xl-7" id="chart_container_outer">
+                        <div id="chart_container_inner">
+                            <canvas id="scatterChart"></canvas>
+                        </div>
+                        <div class="mb-2">
+                            <button type="button" id="btn_reset_seperator" class="btn btn-primary" onclick="reset_seperator()" disabled>Reset seperator</button>
+                        </div>
+                    </div>
+                    <div class="col-xl-5">
+                        <div class="card" id="tests_container">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h5 class="card-title">Tests for...</h5>
+                                    </div>
+                                    <div class="col-6 text-end text-nowrap p-0">
+                                        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#settings">
+                                            Settings
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                                                <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                                            </svg> 
+                                        </button> 
+                                    </div>
+                                </div>
+                                
+                                <ul class="nav nav-tabs card-header-tabs" data-bs-tabs="tabs">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" aria-current="true" data-bs-toggle="tab" href="#var_a"  id="var_title_A">Variable A</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#var_b" id="var_title_B">Variable B</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="card-body tab-content">
+                                <!-- Tests / Table vor var A-->
+                                <div class="tab-pane active" id="var_a">
+                                    <h5 class="card-title">Binary classification evaluation metrics</h5>
+                                    <div class="row mb-2 visability_sensi_speci" style>
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_sens_A"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Sensitivity" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'sens')" onmouseout="show_colours_calc_table()">Sensitivity</definition>: </span><span id="sensA">0</span>
+                                        </div>
+                                        <div class="col-6">
+                                           <span class="card-text" id="var_spec_A"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Specificity" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'speci')" onmouseout="show_colours_calc_table()">Specificity</definition>: </span><span id="specA">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2 visability_miss_fale" style="display: none;">
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_A"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Miss Rate" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'missrate')" onmouseout="show_colours_calc_table()">Miss Rate</definition>: </span><span id="missA">0</span>
+                                        </div>
+                                        <div class="col-6">
+                                           <span class="card-text" id="var_NPV_A"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="False Alarm Rate" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'fale')" onmouseout="show_colours_calc_table()">False Alarm Rate</definition>: </span><span id="faleA">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2 visability_ppv_npv" style>
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Positive Predictive Value" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'ppv')" onmouseout="show_colours_calc_table()">Pos. Predictive Value</definition>: </span><span id="ppvA">0</span>
+                                        </div>
+                                        <div class="col-6">
+                                           <span class="card-text" id="var_NPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Negative Predictive Value" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'npv')" onmouseout="show_colours_calc_table()">Neg. Predictive Value</definition>: </span><span id="npvA">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2 visability_fdr_for" style="display: none;">
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_NPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="False Discovery Rate" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'fdr')" onmouseout="show_colours_calc_table()">False Discovery Rate</definition>: </span><span id="fdrA">0</span>
+                                         </div>
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="False Omission Rate" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'for')" onmouseout="show_colours_calc_table()">False Omission Rate</definition>: </span><span id="forA">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2 visability_plr_nlr" style="display: none;">
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Positive Likelihood Ratio" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'plr')" onmouseout="show_colours_calc_table()">Pos. Likelihood Ratio</definition>: </span><span id="plrA">0</span>
+                                        </div>
+                                        <div class="col-6">
+                                           <span class="card-text" id="var_NPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Negative Likelihood Ratio" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'nlr')" onmouseout="show_colours_calc_table()">Neg. Likelihood Ratio</definition>: </span><span id="nlrA">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2 visability_accu_F1" style="display: none;">
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Accuracy" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'accu')" onmouseout="show_colours_calc_table()">Accuracy</definition>: </span><span id="accuA">0</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="F1-Score" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'f1')" onmouseout="show_colours_calc_table()">F<sub>1</sub>-Score</definition>: </span><span id="f1A">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2 visability_dodds_youden" style="display: none;">
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Diagnostic Odds Ratio" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'diag')" onmouseout="show_colours_calc_table()">Diag. Odds Ratio</definition>: </span><span id="doddsA">0</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Youden's J" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'youden')" onmouseout="show_colours_calc_table()">Youden's J</definition>: </span><span id="youdenA">0</span>
+                                        </div>
+                                    </div>
+                                    <h5 class="card-title">Contingency table</h5>
+                                    <table class="table table-bordered table-hover align-middle m-0">
+                                        <thead>
+                                            <tr><th></th><th colspan="2">de facto classification (true group allocation)</th></tr>
+                                            <tr>
+                                                <th>predicted classification</th>
+                                                <th id="con_table_A_VarA_outer"><span id="con_table_A_VarA">Variable A</span><br>(<i>n</i> = <span id="con_table_A_VarA_n">0</span>)</th>
+                                                <th id="con_table_A_VarB_outer"><span id="con_table_A_VarB">Variable B</span><br>(<i>n</i> = <span id="con_table_A_VarB_n">0</span>)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th id="con_table_A_pos_results_outer"><span id="con_table_A_pos_results">Variable A</span><br>(<i>n</i> = <span id="con_table_A_pos_results_n">0</span>)</th>
+                                                <td id="con_table_A_true_pos">true positive</td>
+                                                <td id="con_table_A_false_pos">false positive</td>
+                                            </tr>
+                                            <tr>
+                                                <th id="con_table_A_neg_results_outer"><span id="con_table_A_neg_results">Variable B</span><br>(<i>n</i> = <span id="con_table_A_neg_results_n">0</span>)</th>
+                                                <td id="con_table_A_false_neg">false negative</td>
+                                                <td id="con_table_A_true_neg">true negative</td>
+                                            </tr>
+                                        </tbody>
+                                    </table> 
+                                </div>
+                                <!-- Tests / Table vor var B-->
+                                <div class="tab-pane" id="var_b">
+                                    <h5 class="card-title">Binary classification evaluation metrics</h5>
+                                    <div class="row mb-2 visability_sensi_speci" style>
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_sens_A"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Sensitivity" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'sens')" onmouseout="show_colours_calc_table()">Sensitivity</definition>: </span><span id="sensB">0</span>
+                                        </div>
+                                        <div class="col-6">
+                                           <span class="card-text" id="var_spec_A"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Specificity" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'speci')" onmouseout="show_colours_calc_table()">Specificity</definition>: </span><span id="specB">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2 visability_miss_fale" style="display: none;">
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_A"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Miss Rate" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'missrate')" onmouseout="show_colours_calc_table()">Miss Rate</definition>: </span><span id="missB">0</span>
+                                        </div>
+                                        <div class="col-6">
+                                           <span class="card-text" id="var_NPV_A"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="False Alarm Rate" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'fale')" onmouseout="show_colours_calc_table()">False Alarm Rate</definition>: </span><span id="faleB">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2 visability_ppv_npv" style>
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Positive Predictive Value" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'ppv')" onmouseout="show_colours_calc_table()">Pos. Predictive Value</definition>: </span><span id="ppvB">0</span>
+                                        </div>
+                                        <div class="col-6">
+                                           <span class="card-text" id="var_NPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Negative Predictive Value" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'npv')" onmouseout="show_colours_calc_table()">Neg. Predictive Value</definition>: </span><span id="npvB">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2 visability_fdr_for" style="display: none;">
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_NPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="False Discovery Rate" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'fdr')" onmouseout="show_colours_calc_table()">False Discovery Rate</definition>: </span><span id="fdrB">0</span>
+                                         </div>
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="False Omission Rate" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'for')" onmouseout="show_colours_calc_table()">False Omission Rate</definition>: </span><span id="forB">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2 visability_plr_nlr" style="display: none;">
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Positive Likelihood Ratio" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'plr')" onmouseout="show_colours_calc_table()">Pos. Likelihood Ratio</definition>: </span><span id="plrB">0</span>
+                                        </div>
+                                        <div class="col-6">
+                                           <span class="card-text" id="var_NPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Negative Likelihood Ratio" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'nlr')" onmouseout="show_colours_calc_table()">Neg. Likelihood Ratio</definition>: </span><span id="nlrB">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2 visability_accu_F1" style="display: none;">
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Accuracy" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'accu')" onmouseout="show_colours_calc_table()">Accuracy</definition>: </span><span id="accuB">0</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="F1-Score" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'f1')" onmouseout="show_colours_calc_table()">F<sub>1</sub>-Score</definition>: </span><span id="f1B">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2 visability_dodds_youden" style="display: none;">
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Diagnostic Odds Ratio" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'diag')" onmouseout="show_colours_calc_table()">Diag. Odds Ratio</definition>: </span><span id="doddsB">0</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="card-text" id="var_PPV_B"><definition data-bs-toggle="popover" class="custom-popover" data-bs-html="true" data-bs-placement="top" data-bs-original-title="Youden's J" data-bs-content="" data-bs-trigger="hover" onmouseover="show_colours_calc_table('show', 'youden')" onmouseout="show_colours_calc_table()">Youden's J</definition>: </span><span id="youdenB">0</span>
+                                        </div>
+                                    </div>
+                                    <h5 class="card-title">Contingency table</h5>
+                                    <table class="table table-bordered table-hover align-middle m-0">
+                                        <thead>
+                                            <tr><th></th><th colspan="2">de facto classification (true group allocation)</th></tr>
+                                            <tr>
+                                                <th>predicted classification</th>
+                                                <th id="con_table_B_VarB_outer"> <span id="con_table_B_VarB">Variable B</span><br>(<i>n</i> = <span id="con_table_B_VarB_n">0</span>)</th>
+                                                <th id="con_table_B_VarA_outer"> <span id="con_table_B_VarA">Variable A</span><br>(<i>n</i> = <span id="con_table_B_VarA_n">0</span>)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <th id="con_table_B_pos_results_outer"><span id="con_table_B_pos_results">Variable B</span><br>(<i>n</i> = <span id="con_table_B_pos_results_n">0</span>)</th>
+                                                <td id="con_table_B_true_pos">true positive</td>
+                                                <td id="con_table_B_false_pos">false positive</td>
+                                            </tr>
+                                            <tr>
+                                                <th id="con_table_B_neg_results_outer"><span id="con_table_B_neg_results">Variable A</span><br>(<i>n</i> = <span id="con_table_B_neg_results_n">0</span>)</th>
+                                                <td id="con_table_B_false_neg">false negative</td>
+                                                <td id="con_table_B_true_neg">true negative</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </div>
+
+        <div class="container text-center footer">
+            <p class="pt-5 text-secondary">DiaMetrics was made with <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16"><path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/></svg>, <a href="https://getbootstrap.com/" class="text-secondary" target="_blank">Bootstrap</a> & <a href="https://www.chartjs.org/" class="text-secondary" target="_blank">Chart.js</a> for teaching @ <a href="https://www.uni-giessen.de/de/fbz/fb06/psychologie/abt/p-diagnostik" class="text-secondary" target="_blank">Department of Psychological Diagnostics</a>, <a href="https://uni-giessen.de" class="text-secondary" target="_blank">Justus-Liebig-University Giessen</a>, Germany</p>
+            <p class="text-secondary">Version 1.0.0 | 
+                <a href="https://github.com/lrosenplaenter/DiaMetrics_lite" class="text-secondary" target="_blank" title="Repository">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+                    </svg></a> | 
+                <a href="https://lrosenplaenter.github.io/DiaMetrics_DE/" class="text-secondary" target="_blank" title="German Version">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-translate" viewBox="0 0 16 16">
+                        <path d="M4.545 6.714 4.11 8H3l1.862-5h1.284L8 8H6.833l-.435-1.286zm1.634-.736L5.5 3.956h-.049l-.679 2.022H6.18z"/>
+                        <path d="M0 2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v3h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-3H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zm7.138 9.995c.193.301.402.583.63.846-.748.575-1.673 1.001-2.768 1.292.178.217.451.635.555.867 1.125-.359 2.08-.844 2.886-1.494.777.665 1.739 1.165 2.93 1.472.133-.254.414-.673.629-.89-1.125-.253-2.057-.694-2.82-1.284.681-.747 1.222-1.651 1.621-2.757H14V8h-3v1.047h.765c-.318.844-.74 1.546-1.272 2.13a6.066 6.066 0 0 1-.415-.492 1.988 1.988 0 0 1-.94.31z"/>
+                    </svg></a> | 
+                <a href="https://lrosenplaenter.github.io/DiaMetrics/" class="text-secondary" target="_blank" title="Full Version">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive" viewBox="0 0 16 16">
+                        <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5zm13-3H1v2h14zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
+                    </svg></a>
+            </p>
+            <p class="text-secondary">Copyright (c) 2024 <a href="https://orcid.org/0009-0001-4961-2281" class="text-secondary" target="_blank">Leon Rosenplänter</a></p>
+        </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="modal fade" id="settings" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Settings</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <p><b>Choose which metrics to show:</b></p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" id="settings_sensi_speci" onclick="set_metrics(1)" checked>
+                            <label class="form-check-label" for="settings_sensi_speci">
+                                Sensitivity & Specificity
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="2" id="settings_miss_fale" onclick="set_metrics(2)">
+                            <label class="form-check-label" for="settings_miss_fale">
+                                Miss Rate & False Alarm Rate
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="3" id="settings_ppv_npv" onclick="set_metrics(3)" checked>
+                            <label class="form-check-label" for="settings_ppv_npv">
+                                Positive Predictive Value & Negative Predictive Value
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="4" id="settings_for_fdr" onclick="set_metrics(4)">
+                            <label class="form-check-label" for="settings_for_fdr">
+                                False Discovery Rate & False Omission Rate
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="5" id="settings_plr_nlr" onclick="set_metrics(5)">
+                            <label class="form-check-label" for="settings_plr_nlr">
+                                Positive Likelihood Ratio & Negative Likelihood Ratio
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="7" id="settings_accu_F1" onclick="set_metrics(7)">
+                            <label class="form-check-label" for="settings_accu_F1">
+                                Accuracy & F1-Score
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="6" id="settings_dodds_youden" onclick="set_metrics(6)">
+                            <label class="form-check-label" for="settings_dodds_youden">
+                                Diagnostic Odds Ratio & Youden's J
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <p><b>Modify variable names:</b></p>
+                        <div class="row">
+                            <div class="col-md-6 mb-2 pe-1">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name_group_a" placeholder = "Group A" value="Group A" oninput="modified_settings()">
+                                    <label for="name_group_a">Name for Group A</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-2 ps-1">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name_group_b" placeholder = "Group B" value="Group B" oninput="modified_settings()">
+                                    <label for="name_group_b">Name for Group B</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-2 pe-1">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name_axis_x" placeholder = "Metric X" value="Metric X" oninput="modified_settings()">
+                                    <label for="name_axis_x">Name for X Axis</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-2 ps-1">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name_axis_y" placeholder = "Metric Y" value="Metric Y" oninput="modified_settings()">
+                                    <label for="name_axis_y">Name for Y Axis</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 input-group mb-3">
+                                <div class="input-group-text">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="switch_fairness" onclick="modified_settings()">
+                                        <label class="form-check-label" for="switch_fairness">Fairness Mode</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name_group_c" placeholder = "Group C" value="Group C" oninput="modified_settings()">
+                                    <label for="name_group_a">Name for Group C</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12 input-group">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="url_textfield" value="url" onClick="this.select()" readonly>
+                                    <label for="url_textfield">Share your settings with this URL:</label>
+                                </div>
+                                <button class="btn btn-outline-secondary" onclick="copyText()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
+                                    </svg>
+                                </button>
+                              </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue</button>
+            </div>
+        </div>
+        </div>
+    </div>
+  
+    <!-- Device-Warning -->
+    <div class="modal fade" id="device-warning" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Information: DiaMetrics (lite) on mobile devices</h1>
+            </div>
+            <div class="modal-body">
+                <p>DiaMetrics (lite) should work fine on mobile or touch devices, but DiaMetrics (lite) is not optimised for use on those kinds of devices.</p>
+                <p>If you have any problems, consider switching to a desktop device.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-target="#tutorial-0" data-bs-toggle="modal">Continue</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS https://getbootstrap.com/docs/5.3/about/license/ -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="data.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+/*
+ * DiaMetrics (lite) v1.0.0
+ * https://github.com/lrosenplaenter/DiaMetrics_lite
+ * Copyright (c) 2024 Leon Rosenplänter. 
+ * DiaMetrics is available under the MIT license.
+ */
+
+*:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+.table th, .table td {
+    white-space: normal;
+    width: 33.33%;
+}
+
+definition {
+    cursor: help;
+    color: #003e81;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+definition:hover {
+    color: #0264ce;
+}
+
+.pointer:hover {
+    cursor: pointer;
+}
+
+.popover {
+    max-width: 450px;
+}
+
+.popover_calc_color_P {
+    color: #22b14c;
+}
+
+.popover_calc_color_N {
+    color: #3f48cc;
+}
+
+.popover_calc_color_PP {
+    color: #ede102;
+}
+
+.popover_calc_color_PN {
+    color: #ed1c24;
+}
+
+.popover_calc_color_TP {
+    color: #b5e61d;
+}
+
+.popover_calc_color_FP {
+    color: #00a2e8;
+}
+
+.popover_calc_color_FN {
+    color: #ff7f27;
+}
+
+.popover_calc_color_TN {
+    color: #a349a4;
+}
