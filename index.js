@@ -10,9 +10,9 @@ var data = {
     datasets: []
 };
 
-// vars used to limit the rate of calls while dragging the seperator
+// vars used to limit the rate of calls while dragging the separator
 var throttleTimeout;
-const throttleDelay = 50; //delay between calls while dragging the seperator in ms
+const throttleDelay = 50; //delay between calls while dragging the separator in ms
 
 // configuration of scatter-plot
 var new_coordinates; // var to hold values of new points calculated on drag of the blue line
@@ -104,9 +104,10 @@ var sample_size_A = ext_data.data_a.length
 var sample_size_B = ext_data.data_b.length
 var color_A = '#008080'
 var color_B = '#FF6F61'
-var seperator_m = null;
-var seperator_b = null;
+var separator_m = null;
+var separator_b = null;
 var fairness_mode = false;
+var separator_mode = "1d";
 
 /*** get params from URL and parse into variables ***/
 read_url ();
@@ -114,8 +115,8 @@ function read_url () {
     const currentUrl = new URL(window.location.href);
     const urlSearchParams = currentUrl.searchParams;
 
-    const params = ["vara", "varb", "varc", "mx", "my", "fair"];
-    const labels = ["label_A", "label_B", "label_C", "label_scale_X", "label_scale_Y", "fairness_mode"];
+    const params = ["vara", "varb", "varc", "mx", "my", "fair", "sepm"];
+    const labels = ["label_A", "label_B", "label_C", "label_scale_X", "label_scale_Y", "fairness_mode", "separator_mode"];
 
     const values = params.map(param => {
         const value = urlSearchParams.get(param);
@@ -140,6 +141,13 @@ function set_settings() {
     document.getElementById('name_axis_x').value = label_scale_X;
     document.getElementById('name_axis_y').value = label_scale_Y;
     document.getElementById('name_group_c').value = label_C;
+
+    //Separator-Mode-Swich
+    if (separator_mode == "1d") {
+        document.getElementById('switch_separator_mode').value = "1d";
+    } else if (separator_mode == "2d") {
+        document.getElementById('switch_separator_mode').value = "2d";
+    }
 
     //Fairness-Mode-Switch
     if (fairness_mode == "true") {
@@ -201,7 +209,7 @@ function generate_data () {
     
     datasets.push(
         {
-            // xy-pairs for Seperator
+            // xy-pairs for separator
             label: 'none',
             data: data_C,
             borderColor: '#3366FF',
@@ -264,11 +272,11 @@ function determine_equation() {
 
     // calc slope
     var m = deviation_y / deviation_x
-    seperator_m = m //set value to global var
+    separator_m = m //set value to global var
 
     // calc intercept
     var b = -m * coordinates[0].x_value + coordinates[0].y_value
-    seperator_b = b
+    separator_b = b
 
     // calculate the new points of the linear line and update the plot
     // get min & max value of the x axis
@@ -316,11 +324,11 @@ function linear_regression() {
         denominator += x_Diff * x_Diff;
     }
     const m = numerator / denominator;
-    seperator_m = m //set to global var
+    separator_m = m //set to global var
     const b = mean_Y - m * mean_X;
-    seperator_b = b //set to global var
+    separator_b = b //set to global var
 
-    // Calc Points for the seperator
+    // Calc Points for the separator
     // get min & max value of the x axis
     var x_axis_min = scatterChart.scales.x.min
     var x_axis_max = scatterChart.scales.x.max
@@ -332,8 +340,8 @@ function linear_regression() {
     return result;
 }
 
-//reset the seperator-line on button click
-function reset_seperator () {
+//reset the separator-line on button click
+function reset_separator () {
     scatterChart.data.datasets[2].data = linear_regression();
     scatterChart.update();
     calc();
@@ -344,11 +352,11 @@ function calc () {
     var data_X = scatterChart.data.datasets[0].data
     var data_Y = scatterChart.data.datasets[1].data
 
-    // count points above & below seperator for X
+    // count points above & below separator for X
     var num_above_X = 0;
     var num_below_X = 0;
     for (var i in data_X) {
-        var y = data_X[i].x * seperator_m + seperator_b // y = x * m + b
+        var y = data_X[i].x * separator_m + separator_b // y = x * m + b
         if (data_X[i].y >= y) {
             num_above_X ++;
         } else if (data_X[i].y < y) {
@@ -356,11 +364,11 @@ function calc () {
         }
     }
 
-    // count points above & below seperator for Y
+    // count points above & below separator for Y
     var num_above_Y = 0;
     var num_below_Y = 0;
     for (var i in data_Y) {
-        var y = data_Y[i].x * seperator_m + seperator_b // y = x * m + b
+        var y = data_Y[i].x * separator_m + separator_b // y = x * m + b
         if (data_Y[i].y >= y) {
             num_above_Y ++;
         } else if (data_Y[i].y < y) {
@@ -576,6 +584,9 @@ function modified_settings() {
     label_scale_X = document.getElementById("name_axis_x").value
     label_scale_Y = document.getElementById("name_axis_y").value
 
+    //separator-mode
+    separator_mode = document.getElementById("switch_separator_mode").value
+
     //fairness-mode
     var checked = document.getElementById("switch_fairness").checked
     if (checked == true) {
@@ -614,7 +625,7 @@ function generate_url() {
 
     // add parameters to url
     var checked = document.getElementById("switch_fairness").checked
-    new_url = currentUrl +"?vara="+label_A+"&"+"varb="+label_B+"&"+"varc="+label_C+"&"+"mx="+label_scale_X+"&"+"my="+label_scale_Y+"&"+"fair="+checked;
+    new_url = currentUrl +"?vara="+label_A+"&"+"varb="+label_B+"&"+"varc="+label_C+"&"+"mx="+label_scale_X+"&"+"my="+label_scale_Y+"&"+"fair="+checked+"&"+"sepm="+separator_mode;
 
     // copy URL to text-input in settings for user to copy
     document.getElementById("url_textfield").value = new_url
@@ -626,7 +637,7 @@ window.addEventListener('resize', resize_canvas);
 resize_canvas();
 function resize_canvas () {
     var tests_container_elem_height = document.getElementById('tests_container').clientHeight;
-    var button_height = 31//document.getElementById('btn_reset_seperator').clientHeight;
+    var button_height = 31//document.getElementById('btn_reset_separator').clientHeight;
     var canvas_elem = document.getElementById('chart_container_inner')
 
     // check width, to determine if orientation is horizontal (e.g. the "results" are displayed on the left, not below the chart)
@@ -678,7 +689,7 @@ function activate_interface(example) {
     document.getElementById('con_table_B_neg_results').innerHTML = label_A;
 
     // activate Button
-    document.getElementById('btn_reset_seperator').disabled = false;
+    document.getElementById('btn_reset_separator').disabled = false;
 
 }
 
