@@ -26,6 +26,14 @@ var options = {
             title: {
                 display: true,
                 text: 'X-Axis',
+                font: {
+                    size: 14,
+                }
+            },
+            ticks: {
+                font: {
+                    size: 14,
+                }
             },
         },
         y: {
@@ -34,6 +42,14 @@ var options = {
             title: {
                 display: true,
                 text: 'Y-Axis',
+                font: {
+                    size: 14,
+                }
+            },
+            ticks: {
+                font: {
+                    size: 14,
+                }
             },
             max: null,
         }
@@ -44,7 +60,10 @@ var options = {
         },
         legend: {
             labels: {
-                filter: item => item.text !== 'none'
+                filter: item => item.text !== 'none',
+                font: {
+                    size: 14
+                }
             }
         },
         dragData: {
@@ -393,19 +412,23 @@ function seperator_position () {
     const y_axis_max = scatterChart.scales.y.max
 
     var result = [{x: mean_X, y: y_axis_min},{x: mean_X, y: y_axis_max + 5}]
-    console.log(result)
     return result;
 }
 
 //reset the separator-line on button click
 function reset_separator () {
-    scatterChart.data.datasets[2].data = linear_regression();
-    scatterChart.update();
-    calc();
+    if (separator_mode == '1d') {
+        scatterChart.data.datasets[2].data = seperator_position ();
+        scatterChart.update();
+        calc();
+    } else if (separator_mode == '2d') {
+        scatterChart.data.datasets[2].data = linear_regression();
+        scatterChart.update();
+        calc();
+    }
 }
 
 function calc () {
-    console.log("HUHU")
     // get data from X (A) & Y (B), depending on the example
     var data_X = scatterChart.data.datasets[0].data
     var data_Y = scatterChart.data.datasets[1].data
@@ -418,7 +441,6 @@ function calc () {
     // get point above and below the separator depending on the separator-mode
     if (separator_mode == '1d') {
         var cutoff = scatterChart.data.datasets[2].data[0].x
-        console.log(cutoff)
         // count points above & below separator for X
         for (var i in data_X) {
             if (data_X[i].x >= cutoff) {
