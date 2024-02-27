@@ -1,5 +1,5 @@
 /*
- * DiaMetrics (lite) v1.0.0
+ * DiaMetrics (lite) v1.1.0
  * https://github.com/lrosenplaenter/DiaMetrics_lite
  * Copyright (c) 2024 Leon Rosenplänter. 
  * DiaMetrics is available under the MIT license.

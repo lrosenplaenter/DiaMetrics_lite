@@ -35,6 +35,6 @@ keywords:
   - learning-resources
   - learning-tool
 license: MIT
-commit: initial commit
-version: 1.0.0
-date-released: '2024-02-01'
+commit: v1.1.0
+version: 1.1.0
+date-released: '2024-02-27'
