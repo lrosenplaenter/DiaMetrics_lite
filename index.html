@@ -5,7 +5,7 @@
     Copyright (c) 2024 Leon Rosenplänter. 
     DiaMetrics is available under the MIT license.
 -->
-<html lang="de">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -30,7 +30,7 @@
                             <canvas id="scatterChart"></canvas>
                         </div>
                         <div class="mb-2">
-                            <button type="button" id="btn_reset_seperator" class="btn btn-primary" onclick="reset_seperator()" disabled>Reset seperator</button>
+                            <button type="button" id="btn_reset_separator" class="btn btn-primary" onclick="reset_separator()" disabled>Reset separator</button>
                         </div>
                     </div>
                     <div class="col-xl-5">
@@ -309,7 +309,19 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-12">
+                    <div class="col-12 mb-3">
+                        <p><b>Toggle separator mode:</b></p>
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <select class="form-select border-secondary-subtle" id="switch_separator_mode" onchange="modified_settings()">
+                                    <option value="1d" selected>1D: one-dimensional separator ("cut-off")</option>
+                                    <option value="2d">2D: two-dimensional separator ("classification")</option>
+                                </select>
+                                <label for="switch_separator_mode">Separator Mode</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-3">
                         <p><b>Modify variable names:</b></p>
                         <div class="row">
                             <div class="col-md-6 mb-2 pe-1">
@@ -336,30 +348,32 @@
                                     <label for="name_axis_y">Name for Y Axis</label>
                                 </div>
                             </div>
-                            <div class="col-md-12 input-group mb-3">
+                            <div class="col-md-12 input-group mb-2">
                                 <div class="input-group-text">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" role="switch" id="switch_fairness" onclick="modified_settings()">
                                         <label class="form-check-label" for="switch_fairness">Fairness Mode</label>
                                     </div>
                                 </div>
-
                                 <div class="form-floating">
                                     <input type="text" class="form-control" id="name_group_c" placeholder = "Group C" value="Group C" oninput="modified_settings()">
                                     <label for="name_group_a">Name for Group C</label>
                                 </div>
                             </div>
-                            <div class="col-md-12 input-group">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="url_textfield" value="url" onClick="this.select()" readonly>
-                                    <label for="url_textfield">Share your settings with this URL:</label>
-                                </div>
-                                <button class="btn btn-outline-secondary" onclick="copyText()">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
-                                    </svg>
-                                </button>
-                              </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <p><b>Share your settings:</b></p>
+                        <div class="input-group">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="url_textfield" value="url" onClick="this.select()" readonly>
+                                <label for="url_textfield">Share your settings with this URL:</label>
+                            </div>
+                            <button class="btn btn-outline-secondary" onclick="copyText()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>
