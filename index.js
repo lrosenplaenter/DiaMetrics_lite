@@ -12,10 +12,10 @@ var data = {
 
 // vars used to limit the rate of calls while dragging the separator
 var throttleTimeout;
-const throttleDelay = 50; //delay between calls while dragging the separator in ms
+var throttleDelay = 50; //delay between calls while dragging the separator in ms
 
 // configuration of scatter-plot
-var new_coordinates; // var to hold values of new points calculated on drag of the blue line
+var new_coordinates; // var to hold values of new points calculated on drag of the seperator
 var options = {
     maintainAspectRatio: false,
     responsive: true,
@@ -35,6 +35,7 @@ var options = {
                 display: true,
                 text: 'Y-Axis',
             },
+            max: null,
         }
     },
     plugins: {
@@ -48,8 +49,11 @@ var options = {
         },
         dragData: {
             dragX: true,
+            dragY: null,
             onDragStart: (event) => {
                 event.target.style.cursor = 'grabbing'
+                scatterChart.options.animation = false;
+                scatterChart.update();
             },
             onDrag: () => {
                 if (!throttleTimeout) {
@@ -57,6 +61,13 @@ var options = {
                     throttleTimeout = setTimeout(() => {
                         // get linear equation from the points of the blue line
                         determine_equation();
+                        // update the separator on drag, if separator-mode is set to 1d ("cut-off") -mode
+                        if (separator_mode == '1d') {
+                            scatterChart.data.datasets[2].data[0].x = new_coordinates[0].x_value    
+                            scatterChart.data.datasets[2].data[1].x = new_coordinates[1].x_value
+                            scatterChart.update();
+                        }
+
                         // calc spec, sens, ... 
                         calc();
             
@@ -66,8 +77,9 @@ var options = {
             },
             onDragEnd: (event) => {
                 event.target.style.cursor = 'default'
-
-                // update the blue line after drag to fit the whole canvas (data generated while dragging with determine_equation())
+                scatterChart.options.animation = true;
+                scatterChart.update();
+                // update the separator after drag to fit the whole canvas (data generated while dragging with determine_equation())
                 scatterChart.data.datasets[2].data[0].x = new_coordinates[0].x_value    
                 scatterChart.data.datasets[2].data[0].y = new_coordinates[0].y_value
                 scatterChart.data.datasets[2].data[1].x = new_coordinates[1].x_value
@@ -204,8 +216,24 @@ function generate_data () {
     scatterChart.options.scales.y.title.text = label_scale_Y;
     scatterChart.update();
 
-    
-    data_C = linear_regression();
+    // determine data-ppints for seperator (1d, 2d) + mode related settings
+    let point_style;
+    let point_radius;
+    if (separator_mode == '1d') {
+        data_C = seperator_position();
+        scatterChart.options.scales.y.max = scatterChart.scales.y.max;
+        scatterChart.options.plugins.dragData.dragY = false;
+        throttleDelay = 0;
+        point_style = 'rectRot'
+        point_radius = 8;
+    } else if (separator_mode == '2d') {
+        data_C = linear_regression();
+        scatterChart.options.scales.y.max = null;
+        scatterChart.options.plugins.dragData.dragY = true;
+        throttleDelay = 50;
+        point_style = 'round';
+        point_radius = 6;
+    }
     
     datasets.push(
         {
@@ -216,8 +244,10 @@ function generate_data () {
             type: 'line',
             fill: false,
             dragData: true,
-            pointRadius: 6,
+            pointRadius: point_radius,
             borderCapStyle: 'round',
+            pointHitRadius: 25,
+            pointStyle: point_style,
         },
     )
 
@@ -255,38 +285,46 @@ function generate_data () {
 
 // calc the linear equation (blue line) and reset point depending on calulated variable to axis values
 function determine_equation() {
-    
-    // get the data Points from the chart-object
-    var ax = scatterChart.data.datasets[2].data[0].x
-    var ay = scatterChart.data.datasets[2].data[0].y
-    var bx = scatterChart.data.datasets[2].data[1].x
-    var by = scatterChart.data.datasets[2].data[1].y
+    if (separator_mode == '1d') {
+        var ax = scatterChart.data.datasets[2].data[0].x
+        const y_axis_min = scatterChart.scales.y.min
+        const y_axis_max = scatterChart.scales.y.max
 
-    var coordinates = [{x_value: ax, y_value: ay},{x_value: bx, y_value: by}]
+        new_coordinates = [{x_value: ax, y_value: y_axis_min},{x_value: ax, y_value: y_axis_max + 5}]
 
-    // y = x * m + b
+    } else if (separator_mode == '2d') {
+        // get the data Points from the chart-object
+        var ax = scatterChart.data.datasets[2].data[0].x
+        var ay = scatterChart.data.datasets[2].data[0].y
+        var bx = scatterChart.data.datasets[2].data[1].x
+        var by = scatterChart.data.datasets[2].data[1].y
 
-    // calc deviation from point to point 
-    var deviation_y = coordinates[1].y_value - coordinates[0].y_value
-    var deviation_x = coordinates[1].x_value - coordinates[0].x_value
+        var coordinates = [{x_value: ax, y_value: ay},{x_value: bx, y_value: by}]
 
-    // calc slope
-    var m = deviation_y / deviation_x
-    separator_m = m //set value to global var
+        // y = x * m + b
 
-    // calc intercept
-    var b = -m * coordinates[0].x_value + coordinates[0].y_value
-    separator_b = b
+        // calc deviation from point to point 
+        var deviation_y = coordinates[1].y_value - coordinates[0].y_value
+        var deviation_x = coordinates[1].x_value - coordinates[0].x_value
 
-    // calculate the new points of the linear line and update the plot
-    // get min & max value of the x axis
-    var x_axis_min = scatterChart.scales.x.min
-    var x_axis_max = scatterChart.scales.x.max
+        // calc slope
+        var m = deviation_y / deviation_x
+        separator_m = m //set value to global var
 
-    // calc y-values for min & max values of x axis
-    var ay = x_axis_min * m + b
-    var by = x_axis_max * m + b
-    new_coordinates = [{x_value: x_axis_min, y_value: ay},{x_value: x_axis_max, y_value: by}]
+        // calc intercept
+        var b = -m * coordinates[0].x_value + coordinates[0].y_value
+        separator_b = b
+
+        // calculate the new points of the linear line and update the plot
+        // get min & max value of the x axis
+        var x_axis_min = scatterChart.scales.x.min
+        var x_axis_max = scatterChart.scales.x.max
+
+        // calc y-values for min & max values of x axis
+        var ay = x_axis_min * m + b
+        var by = x_axis_max * m + b
+        new_coordinates = [{x_value: x_axis_min, y_value: ay},{x_value: x_axis_max, y_value: by}]
+    }
 }
 
 // stich pairs of values together in an object, and return those as an array
@@ -299,10 +337,11 @@ function pair_x_y (x, y) {
     return data;
 }
 
+// in case the seperator is set to "classification" (2d)-mode, determine data-points 
 // get the linear regression to describe the trends of the data
 function linear_regression() {
     // Combine the two arrays depending on the example
-    var data = [].concat(data_A,data_B)
+    let data = [].concat(data_A,data_B)
     
     // calc means of x and y
     let sum_X = 0;
@@ -340,6 +379,24 @@ function linear_regression() {
     return result;
 }
 
+// in case the seperator is set to "cut-off" (1d)-mode, determine data-points 
+function seperator_position () {
+    let data = [].concat(data_A,data_B)
+
+    // calc means of y
+    let sum_X = 0;
+    for (let i = 0; i < data.length; i++) {
+        sum_X += data[i].x;
+    }
+    const mean_X = sum_X / data.length;
+    const y_axis_min = scatterChart.scales.y.min
+    const y_axis_max = scatterChart.scales.y.max
+
+    var result = [{x: mean_X, y: y_axis_min},{x: mean_X, y: y_axis_max + 5}]
+    console.log(result)
+    return result;
+}
+
 //reset the separator-line on button click
 function reset_separator () {
     scatterChart.data.datasets[2].data = linear_regression();
@@ -348,31 +405,57 @@ function reset_separator () {
 }
 
 function calc () {
+    console.log("HUHU")
     // get data from X (A) & Y (B), depending on the example
     var data_X = scatterChart.data.datasets[0].data
     var data_Y = scatterChart.data.datasets[1].data
 
-    // count points above & below separator for X
     var num_above_X = 0;
     var num_below_X = 0;
-    for (var i in data_X) {
-        var y = data_X[i].x * separator_m + separator_b // y = x * m + b
-        if (data_X[i].y >= y) {
-            num_above_X ++;
-        } else if (data_X[i].y < y) {
-            num_below_X ++;
-        }
-    }
-
-    // count points above & below separator for Y
     var num_above_Y = 0;
     var num_below_Y = 0;
-    for (var i in data_Y) {
-        var y = data_Y[i].x * separator_m + separator_b // y = x * m + b
-        if (data_Y[i].y >= y) {
-            num_above_Y ++;
-        } else if (data_Y[i].y < y) {
-            num_below_Y ++;
+
+    // get point above and below the separator depending on the separator-mode
+    if (separator_mode == '1d') {
+        var cutoff = scatterChart.data.datasets[2].data[0].x
+        console.log(cutoff)
+        // count points above & below separator for X
+        for (var i in data_X) {
+            if (data_X[i].x >= cutoff) {
+                num_above_X ++;
+            } else if (data_X[i].x < cutoff) {
+                num_below_X ++;
+            }
+        }
+
+        // count points above & below separator for Y
+        for (var i in data_Y) {
+            if (data_Y[i].x >= cutoff) {
+                num_above_Y ++;
+            } else if (data_Y[i].x < cutoff) {
+                num_below_Y ++;
+            }
+        }
+
+    } else if (separator_mode == '2d') {
+        // count points above & below separator for X
+        for (var i in data_X) {
+            var y = data_X[i].x * separator_m + separator_b // y = x * m + b
+            if (data_X[i].y >= y) {
+                num_above_X ++;
+            } else if (data_X[i].y < y) {
+                num_below_X ++;
+            }
+        }
+
+        // count points above & below separator for Y
+        for (var i in data_Y) {
+            var y = data_Y[i].x * separator_m + separator_b // y = x * m + b
+            if (data_Y[i].y >= y) {
+                num_above_Y ++;
+            } else if (data_Y[i].y < y) {
+                num_below_Y ++;
+            }
         }
     }
 
@@ -660,7 +743,11 @@ function change_cursor_on_hover(mousemove) {
 
         // Check if the cursor is over the third dataset (blue line, data_C)
         if (datasetIndex === 2) {
-            mousemove.target.style.cursor = 'grab';
+            if (separator_mode == '1d') {
+                mousemove.target.style.cursor = 'col-resize';
+            } else if (separator_mode == '2d') {
+                mousemove.target.style.cursor = 'grab';
+            }
         } else {
             mousemove.target.style.cursor = 'default';
         }
