@@ -12,10 +12,6 @@ authors:
   - given-names: Leon
     family-names: Rosenplänter
     orcid: 'https://orcid.org/0009-0001-4961-2281'
-identifiers:
-  - type: doi
-    value: 10.5281/zenodo.10719565
-    description: Zenodo Archive
 repository-code: 'https://github.com/lrosenplaenter/DiaMetrics_lite'
 url: 'https://lrosenplaenter.github.io/DiaMetrics_lite'
 abstract: >-
@@ -39,6 +35,6 @@ keywords:
   - learning-resources
   - learning-tool
 license: MIT
-commit: v1.1.0
-version: 1.1.0
-date-released: '2024-02-27'
+commit: v1.1.1
+version: 1.1.1
+date-released: '2025-03-10'

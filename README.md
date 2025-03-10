@@ -2,8 +2,6 @@
 
 DiaMetrics (lite) is a web-based educational resource for exploring important concepts regarding binary classification (and its evaluation). While the "full" version is primarily intended for independent learning, the lite version is intended for use with direct instruction (e.g. in the context of lectures or talks).
 
-[![DOI](https://zenodo.org/badge/726871158.svg)](https://zenodo.org/doi/10.5281/zenodo.10607672)
-
 ## Installation & Usage
 
 No installation is necessary. [Open DiaMetrics (lite) directly](https://lrosenplaenter.github.io/DiaMetrics_lite/). Alternatively: Simply download and open index.html in your browser or store all files on your web server.
@@ -62,8 +60,6 @@ DiaMetrics (lite) uses [Chart.js](https://www.chartjs.org) v4.4.0 to display the
 
 DiaMetrics (lite) uses the [dragdata plugin for Chart.js](https://github.com/chrispahm/chartjs-plugin-dragdata) v2.2.3 to make the separator draggable.
 
-All these resources are integrated via a CDN.
-
 ## License
 
-Copyright (c) 2024 Leon Rosenplänter. DiaMetrics (lite) is available under the [MIT](https://choosealicense.com/licenses/mit/) license. The full text of the licence can be found in the [*LICENSE.md*](https://github.com/lrosenplaenter/DiaMetrics_lite/blob/main/LICENSE.md) file.
+Copyright (c) 2024 - 2025 Leon Rosenplänter. DiaMetrics (lite) is available under the [MIT](https://choosealicense.com/licenses/mit/) license. The full text of the licence can be found in the [*LICENSE.md*](https://github.com/lrosenplaenter/DiaMetrics_lite/blob/main/LICENSE.md) file.
