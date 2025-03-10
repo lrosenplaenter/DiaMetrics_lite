@@ -2,6 +2,8 @@
 
 DiaMetrics (lite) is a web-based educational resource for exploring important concepts regarding binary classification (and its evaluation). While the "full" version is primarily intended for independent learning, the lite version is intended for use with direct instruction (e.g. in the context of lectures or talks).
 
+[![DOI](https://zenodo.org/badge/726871158.svg)](https://doi.org/10.5281/zenodo.10607672)
+
 ## Installation & Usage
 
 No installation is necessary. [Open DiaMetrics (lite) directly](https://lrosenplaenter.github.io/DiaMetrics_lite/). Alternatively: Simply download and open index.html in your browser or store all files on your web server.
