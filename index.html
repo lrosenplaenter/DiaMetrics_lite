@@ -402,10 +402,31 @@
         </div>
         </div>
     </div>
+    
+    <!-- Analytics Dialogue-->
+    <div class="modal fade" id="analytics_consent" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">🍪 Before we start: would you like some cookies?</h1>
+            </div>
+            <div class="modal-body">
+                <p>We would like to collect usage statistics to know something about how our website is actually used in the real world.</p>
+                <p>We use Google Analytics for this purpose. You can agree or disagree to the collection and processing of your data.</p>
+                <p>If you consent, your data will be processed in accordance with Google's <a target="_blank" href="https://policies.google.com/privacy">privacy policy</a>.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-target="#tutorial-0" data-bs-toggle="modal">I do not agree.</button>
+                <button type="button" class="btn btn-success" data-bs-target="#tutorial-0" data-bs-toggle="modal" onclick="enableTracking()">I agree.</button>
+            </div>
+        </div>
+        </div>
+    </div>
 
     <!-- Bootstrap JS https://getbootstrap.com/docs/5.3/about/license/ -->
     <script type="text/javascript" src="libs/bootstrap_v5.3.3/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="data.js"></script>
     <script type="text/javascript" src="index.js"></script>
+    <script type="text/javascript" src="analytics.js"></script>
 </body>
 </html>

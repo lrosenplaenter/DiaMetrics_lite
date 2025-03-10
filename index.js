@@ -198,6 +198,8 @@ if (window.innerWidth <= 768) {
     display_device_alert ();
 } else if (!window.matchMedia('(pointer:fine)').matches) {
     display_device_alert ();
+} else {
+    show_analyticsConsent();
 }
 
 //display_device_alert()
@@ -205,6 +207,13 @@ function display_device_alert() {
     var modal = new bootstrap.Modal(document.getElementById('device-warning'));
     modal.show();
 }
+
+//display Google Analytics dialogue
+function show_analyticsConsent() {
+    var modal = new bootstrap.Modal(document.getElementById('analytics_consent'));
+    modal.show();
+}
+
 
 generate_data()
 /*** generating data depending on the picked example & other funtionality ***/
