@@ -64,4 +64,4 @@ DiaMetrics (lite) uses the [dragdata plugin for Chart.js](https://github.com/chr
 
 ## License
 
-Copyright (c) 2024 - 2025 Leon Rosenplänter. DiaMetrics (lite) is available under the [MIT](https://choosealicense.com/licenses/mit/) license. The full text of the licence can be found in the [*LICENSE.md*](https://github.com/lrosenplaenter/DiaMetrics_lite/blob/main/LICENSE.md) file.
+Copyright (c) 2024 - 2025 Leon Rosenplänter. DiaMetrics (lite) is available under the [MIT](https://choosealicense.com/licenses/mit/) license. The full text of the licence can be found in the [*LICENSE*](https://github.com/lrosenplaenter/DiaMetrics_lite/blob/main/LICENSE) file.
